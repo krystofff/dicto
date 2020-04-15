@@ -1,10 +1,12 @@
 package cmd
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 
+	"github.com/kristofff/dicto/utils"
 	"github.com/spf13/cobra"
-	"github.com/bregydoc/gtranslate"
 )
 
 // defCmd represents the def command
@@ -18,19 +20,16 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		text := "Hed"egydoc/gtrnslate
-		translated,spf13gcobanTranslateWithParams(
-			text,
-			gtranslate.TranslationParams{
-				From: "en",
-				To:   "es",
-			},
-		)
-		if err != nil {
+		input := args[0]
+		url := "https://api.dictionaryapi.dev/api/v1/entries/en/" + input
+		fmt.Println("Getting data | url: ", url)
+		res := utils.Request(url, "application/json")
+		dst := &bytes.Buffer{}
+		if err := json.Indent(dst, res, "", "  "); err != nil {
 			panic(err)
 		}
 
-		fmt.Printf("en: %s | es: %s \n", text, translated)
+		fmt.Println(dst.String())
 	},
 }
 
